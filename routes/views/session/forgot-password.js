@@ -1,3 +1,10 @@
+/*
+ * View Model for the Forgot-password page
+ * A page handle the forgot-password issue, where user is asked to enter the registered
+ * email address to receive a reset-password token to contiune the reset process
+ * Renders "%view path%/session/fogot-password/"
+ */
+
 var keystone = require('keystone'),
 	User = keystone.list('User');
 
@@ -6,6 +13,8 @@ exports = module.exports = function(req, res) {
 	var view = new keystone.View(req, res),
 		locals = res.locals;
 	
+        // handle a forgot-password issue, which the targeted user account's email
+        // address is required
 	view.on('post', { action: 'forgot-password' }, function(next) {
 		
 		if (!req.body.email) {

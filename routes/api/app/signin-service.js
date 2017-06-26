@@ -1,3 +1,9 @@
+/*
+ * User creating and signin after successful 3rd-service authentication redirect
+ * authentication info contained in request body
+ * 
+ */
+
 var keystone = require('keystone'),
 	async = require('async'),
 	request = require('request'),
@@ -7,6 +13,7 @@ var keystone = require('keystone'),
 exports = module.exports = function(req, res) {
 	
 	var locals = {
+                // authenticated user info from 3rd-party
 		authUser: req.body.authUser,
 		form: req.body.form,
 		
@@ -47,7 +54,8 @@ exports = module.exports = function(req, res) {
 	// Function to handle data confirmation process
 	async.series([
 		
-		// Check for user by email (only if not signed in)
+		// Check for user by email (only if not signed in), to ensure no
+                // duplicated account is to be created
 		function(next) {
 			
 			if (locals.existingUser) return next();
@@ -91,6 +99,8 @@ exports = module.exports = function(req, res) {
 					services: locals.existingUser.services || {}
 				};
 				
+                                // Setting 3rd-part service authetication type,
+                                // after appoval.
 				_.extend(userData.services[locals.authUser.type], {
 					isConfigured: true,
 					
@@ -145,6 +155,8 @@ exports = module.exports = function(req, res) {
 					services: {}
 				};
 				
+                                // Setting 3rd-part service authetication type,
+                                // after appoval.
 				userData.services[locals.authUser.type] = {
 					isConfigured: true,
 					

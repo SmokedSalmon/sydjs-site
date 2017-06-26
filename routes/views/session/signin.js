@@ -1,3 +1,9 @@
+/*
+ * View Model for the sign-in page (email account)
+ * Signin user with email account and password
+ * Renders "%view path%/session/signin/"
+ */
+
 var keystone = require('keystone'),
 	async = require('async');
 
@@ -13,6 +19,7 @@ exports = module.exports = function(req, res) {
 	locals.section = 'session';
 	locals.form = req.body;
 	
+        // handle signin using email address account and password
 	view.on('post', { action: 'signin' }, function(next) {
 		
 		if (!req.body.email || !req.body.password) {
@@ -20,11 +27,14 @@ exports = module.exports = function(req, res) {
 			return next();
 		}
 		
+                // Define the redirection for a successful signin
 		var onSuccess = function() {
+                        // If post-signin destination is given
 			if (req.body.target && !/join|signin/.test(req.body.target)) {
 				console.log('[signin] - Set target as [' + req.body.target + '].');
 				res.redirect(req.body.target);
-			} else {
+			// else redirect to user profile page
+                        } else {
 				res.redirect('/me');
 			}
 		}

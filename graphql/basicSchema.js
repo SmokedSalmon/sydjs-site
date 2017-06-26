@@ -19,18 +19,22 @@ var User = keystone.list('User');
 var RSVP = keystone.list('RSVP');
 var Organisation = keystone.list('Organisation');
 
+// Backend - finds the next/last Meetup from Model
 function getMeetup (id) {
 	if (id === 'next') {
 		return Meetup.model.findOne().sort('-startDate')
+                // the next meetup must be one with state being active
 			.where('state', 'active').exec();
 	} else if (id === 'last') {
 		return Meetup.model.findOne().sort('-startDate')
+                // the last meetup must be one with state being past
 			.where('state', 'past').exec();
 	} else {
 		return Meetup.model.findById(id).exec();
 	}
 }
 
+// Defines the object Type for the state of a Meetup, drafe/scheduled/active/past.
 var meetupStateEnum = new GraphQLEnumType({
 	name: 'MeetupState',
 	description: 'The state of the meetup',
@@ -42,6 +46,7 @@ var meetupStateEnum = new GraphQLEnumType({
 	},
 });
 
+// Defines the GraphQL Object Type for Meetups
 var meetupType = new GraphQLObjectType({
 	name: 'Meetup',
 	fields: () => ({
@@ -62,11 +67,13 @@ var meetupType = new GraphQLObjectType({
 		url: { type: GraphQLString },
 		remainingRSVPs: { type: new GraphQLNonNull(GraphQLInt) },
 		rsvpsAvailable: { type: new GraphQLNonNull(GraphQLBoolean) },
+                // finds those talks occur in this Meetup
 		talks: {
 			type: new GraphQLList(talkType),
 			resolve: (source, args) =>
 				Talk.model.find().where('meetup', source.id).exec(),
 		},
+                // Finds RSVPs corrspondent to this Meetup
 		rsvps: {
 			type: new GraphQLList(rsvpType),
 			resolve: (source, args) =>
@@ -75,6 +82,7 @@ var meetupType = new GraphQLObjectType({
 	}),
 });
 
+// Defines the GraphQL Object Type for Talks
 var talkType = new GraphQLObjectType({
 	name: 'Talk',
 	fields: () => ({
@@ -117,6 +125,7 @@ var talkType = new GraphQLObjectType({
 	}),
 });
 
+// Defines the GraphQL Object Type of Users
 var userType = new GraphQLObjectType({
 	name: 'User',
 	fields: () => ({
@@ -142,14 +151,17 @@ var userType = new GraphQLObjectType({
 	}),
 });
 
+// Defines the GraphQL Object Type of RSVPs - invitations to users waiting for reply
 var rsvpType = new GraphQLObjectType({
 	name: 'RSVP',
 	fields: {
 		id: { type: new GraphQLNonNull(GraphQLID) },
+                // RSVP of which Meetup
 		meetup: {
 			type: meetupType,
 			resolve: (source) => Meetup.model.findById(source.meetup).exec(),
 		},
+                // RSVP sent to whom
 		who: {
 			type: userType,
 			resolve: (source) => User.model.findById(source.who).exec(),
@@ -160,8 +172,10 @@ var rsvpType = new GraphQLObjectType({
 	},
 });
 
+// Defines the GraphQL Object Type for Organisations
 var organisationType = new GraphQLObjectType({
 	name: 'Organisation',
+        // ??? Why its fields uses Arrow expression while others' do not
 	fields: () => ({
 		id: { type: new GraphQLNonNull(GraphQLID) },
 		name: { type: GraphQLString },
@@ -178,14 +192,17 @@ var organisationType = new GraphQLObjectType({
 	}),
 });
 
+// Here goes the definitions of all GraphQL queries
 var queryRootType = new GraphQLObjectType({
 	name: 'Query',
 	fields: {
+                // List all meetups
 		meetups: {
 			type: new GraphQLList(meetupType),
 			resolve: (_, args) =>
 				Meetup.model.find().exec(),
 		},
+                // List a meetup specified by a given meetup ID
 		meetup: {
 			type: meetupType,
 			args: {
@@ -196,11 +213,13 @@ var queryRootType = new GraphQLObjectType({
 			},
 			resolve: (_, args) => getMeetup(args.id),
 		},
+                // List all talks
 		talks: {
 			type: new GraphQLList(talkType),
 			resolve: (_, args) =>
 				Talk.model.find().exec(),
 		},
+                // List a talk specified by a given talk ID
 		talk: {
 			type: talkType,
 			args: {
@@ -211,6 +230,7 @@ var queryRootType = new GraphQLObjectType({
 			},
 			resolve: (_, args) => Talk.model.findById(args.id).exec(),
 		},
+                // List an organisztion specified by the ID
 		organisation: {
 			type: organisationType,
 			args: {
@@ -221,11 +241,13 @@ var queryRootType = new GraphQLObjectType({
 			},
 			resolve: (_, args) => Organisation.model.findById(args.id).exec(),
 		},
+                // List all users
 		users: {
 			type: new GraphQLList(userType),
 			resolve: (_, args) =>
 				User.model.find().exec(),
 		},
+                // List user specified by a given user ID
 		user: {
 			type: userType,
 			args: {
@@ -236,6 +258,7 @@ var queryRootType = new GraphQLObjectType({
 			},
 			resolve: (_, args) => User.model.findById(args.id).exec(),
 		},
+                // List the rsvp specified by rsvp ID
 		rsvp: {
 			type: rsvpType,
 			args: {
@@ -249,6 +272,7 @@ var queryRootType = new GraphQLObjectType({
 	},
 });
 
+// ??? please figure out the "default" operator/expression of ES6 standard
 export default new GraphQLSchema({
 	query: queryRootType,
 });

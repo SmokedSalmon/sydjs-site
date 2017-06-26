@@ -1,3 +1,11 @@
+/*
+ * View Model for the Link page
+ * @req.params - link: an unique key as a path for user to get to this Link page
+ * Load the specified Link and comment into View Locals, and handles the comment
+ * creation
+ * Renders "%view path%/site/link/"
+ */
+
 var keystone = require('keystone');
 
 var Link = keystone.list('Link'),
@@ -29,6 +37,9 @@ exports = module.exports = function(req, res) {
 
 	});
 	
+        // When a REST post is issued in this route, with a form contained 'create-comment'
+        // the following function will be executed.
+        // Creating a comment for the link
 	view.on('post', { action: 'create-comment' }, function(next) {
 
 		// handle form
@@ -48,6 +59,9 @@ exports = module.exports = function(req, res) {
 			if (err) {
 				locals.validationErrors = err.errors;
 			} else {
+                                // injects flash message in to request body, and
+                                // redirect directive into response body and release
+                                // them back to the pipeline
 				req.flash('success', 'Your comment has been added successfully.');
 				return res.redirect('/links/link/' + locals.link.slug);
 			}

@@ -1,3 +1,9 @@
+/* View Model for the Mentors page
+ * Loads users who is "mentoring available" and present them in the page, with
+ * info of their organizations and given talks
+ * Renders "%view path%/site/mentors/"
+ */
+
 var keystone = require('keystone');
 
 var User = keystone.list('User');

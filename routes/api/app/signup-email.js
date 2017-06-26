@@ -1,3 +1,10 @@
+/*
+ * Email signup page Routing
+ * 
+ * Basic sign-up form using traditional email address
+ * 
+ */
+
 var keystone = require('keystone'),
 	async = require('async'),
 	_ = require('lodash'),

@@ -1,3 +1,10 @@
+/*
+ * View Model for the Meetup page
+ * @req.params - meetup: an unique key as a path for user to get to this meetup page
+ * Load the specified meetup info RSVP stauts for current user
+ * Renders "%view path%/site/meetup/"
+ */
+
 var keystone = require('keystone'),
 	moment = require('moment'),
 	Meetup = keystone.list('Meetup'),

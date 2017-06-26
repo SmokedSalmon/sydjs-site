@@ -28,6 +28,7 @@ var User = keystone.list('User');
 var RSVP = keystone.list('RSVP');
 var Organisation = keystone.list('Organisation');
 
+// ??? Unkonwn, need to study graphql-relay module and come back
 var {nodeInterface, nodeField} = nodeDefinitions(
 	(globalId) => {
 		var {type, id} = fromGlobalId(globalId);

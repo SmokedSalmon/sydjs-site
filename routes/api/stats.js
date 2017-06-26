@@ -1,3 +1,9 @@
+/*
+ * Stat Routing Handler
+ * Returns Statics of the whole Syd-site, including:
+ * Users counts, Post counts and the info of ??? today's upcoming Meetup ????
+ */
+
 var async = require('async'),
 	moment = require('moment'),
 	keystone = require('keystone');
@@ -12,7 +18,8 @@ exports = module.exports = function(req, res) {
 	var stats = {};
 	
 	async.parallel([
-	
+                
+                // Calculate total RSVP for one ??? meetup
 		function(next) {
 			
 			Meetup.model.findOne()
@@ -34,6 +41,7 @@ exports = module.exports = function(req, res) {
 		
 		},
 		
+                // Calculate total User count
 		function(next) {
 			
 			User.model.count()
@@ -44,6 +52,7 @@ exports = module.exports = function(req, res) {
 		
 		},
 		
+                // Calculate total Post count
 		function(next) {
 			
 			Post.model.count()

@@ -1,3 +1,10 @@
+/*
+ * View Model for the Member page
+ * @req.params - member key which can identify a specific user
+ * Load the specific user with populted info of posts and talks under this user
+ * Renders "%view path%/site/member/"
+ */
+
 var keystone = require('keystone'),
 	moment = require('moment');
 
@@ -13,6 +20,8 @@ exports = module.exports = function(req, res) {
 
 
 	// Load the Member
+        // we use aut-generated key instead of the id to identify the user in URL,
+        // because we don't want to expose technical implementaion detail and user privacy
 
 	view.on('init', function(next) {
 		User.model.findOne()

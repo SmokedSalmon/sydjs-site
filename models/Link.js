@@ -4,14 +4,18 @@ var Types = keystone.Field.Types;
 /**
  * Links Model
  * ===========
+ * For Creating Models with Keystone's List concept, please refer to:
+ * http://keystonejs.com/docs/database/#lists
  */
 
+// Create the keystone List object - Link, with list options
 var Link = new keystone.List('Link', {
 	map: { name: 'label' },
 	track: true,
 	autokey: { path: 'slug', from: 'label', unique: true }
 });
 
+// Adds fields to this newly created Link
 Link.add({
 	label: { type: String, required: true, initial: true },
 	href: { type: Types.Url, required: true, initial: true },

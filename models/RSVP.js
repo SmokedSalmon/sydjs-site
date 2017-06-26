@@ -29,12 +29,14 @@ RSVP.schema.pre('save', function(next) {
 	next();
 });
 
+// After saving this RSVP, update the corresponend Meetup item's RSVP-related fields
 RSVP.schema.post('save', function() {
 	keystone.list('Meetup').model.findById(this.meetup, function(err, meetup) {
 		if (meetup) meetup.refreshRSVPs();
 	});
 });
 
+// After canceling this RSVP, update the corresponend Meetup item's RSVP-related fields
 RSVP.schema.post('remove', function() {
 	keystone.list('Meetup').model.findById(this.meetup, function(err, meetup) {
 		if (meetup) meetup.refreshRSVPs();

@@ -1,16 +1,26 @@
 var babelify = require('babelify');
 var bodyParser = require('body-parser');
+// Browserify: go through all "require()" in target js files and buldle them up into
+// a single js file in order to serve it to client browser within a single '<script>' tag
+// Browserify-middleware offers a little more than the basic module, not very popular
 var browserify = require('browserify-middleware');
 var clientConfig = require('../client/config');
 var keystone = require('keystone');
 var middleware = require('./middleware');
+// Express Server for GraphQL, similar to graphql.js
 var graphqlHTTP = require('express-graphql');
+// Import GraphQL Schemas defined under ../graphql/*
 var graphQLSchema = require('../graphql/basicSchema').default;
 var relaySchema = require('../graphql/relaySchema').default;
 
 var importRoutes = keystone.importer(__dirname);
 
 // Common Middleware
+// ======
+// including status 404,500 error handlers
+// res.local (View context variables) initiation
+// Sponosors info injecting into view locals?
+// flash messages(from request) injecting into view locals, before render
 keystone.pre('routes', middleware.initErrorHandlers);
 keystone.pre('routes', middleware.initLocals);
 keystone.pre('routes', middleware.loadSponsors);
@@ -18,6 +28,7 @@ keystone.pre('render', middleware.flashMessages);
 
 // Handle 404 errors
 keystone.set('404', function (req, res, next) {
+        // notFound() is defined in ./middleware.initErrorHandlers
 	res.notfound();
 });
 
@@ -36,6 +47,8 @@ keystone.set('500', function (err, req, res, next) {
 });
 
 // Load Routes
+// Keystone's Route importer will iterate all .js files under the given path, and
+// attache each one to the object literal as elements with original file name
 var routes = {
 	api: importRoutes('./api'),
 	views: importRoutes('./views'),
@@ -60,7 +73,7 @@ exports = module.exports = function (app) {
 		],
 	}));
 
-	// GraphQL
+	// Start a standard and a Relay-compliant GraphQL sever
 	app.use('/api/graphql', graphqlHTTP({ schema: graphQLSchema, graphiql: true }));
 	app.use('/api/relay', graphqlHTTP({ schema: relaySchema, graphiql: true }));
 

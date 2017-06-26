@@ -8,8 +8,10 @@ var Types = keystone.Field.Types;
  */
 
 var Post = new keystone.List('Post', {
+        // ???map each itme's key to its title 
 	map: { name: 'title' },
 	track: true,
+        // Post List's autokey are stored in a dedicated path 'slug'
 	autokey: { path: 'slug', from: 'title', unique: true }
 });
 
@@ -31,6 +33,7 @@ Post.add({
  * ========
  */
 
+// Combine 'content.brief' and 'content.extended' into full content format
 Post.schema.virtual('content.full').get(function() {
 	return this.content.extended || this.content.brief;
 });
@@ -71,14 +74,19 @@ Post.schema.methods.notifyAdmins = function(callback) {
 		}, callback);
 	}
 	// Query data in parallel
+        // Author of the new post and all admins will be notified by email
+        // The emails will be sent asynchronoully by async module.
 	async.parallel({
+                // Query for the model item of the current author to process given method 'next'
 		author: function(next) {
 			if (!post.author) return next();
 			keystone.list('User').model.findById(post.author).exec(next);
 		},
+                // Query for the model item of all admins to process given method 'next'
 		admins: function(next) {
 			keystone.list('User').model.find().where('isAdmin', true).exec(next)
 		}
+        // define 'sendEmail' as the 'next' action used above
 	}, sendEmail);
 };
 

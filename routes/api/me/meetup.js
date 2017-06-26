@@ -1,3 +1,8 @@
+/*
+ * Handle the current user's RSVP status on a specific Meetup, including
+ * RSVP status feedback, change attending or create a New RSVP for that meetup
+ */
+
 var keystone = require('keystone'),
 	RSVP = keystone.list('RSVP');
 
@@ -10,7 +15,8 @@ exports = module.exports = function(req, res) {
 		.where('who', req.user._id)
 		.where('meetup', req.body.data.meetup)
 		.exec(function(err, rsvp) {
-		
+                        
+                        // API out the status of reservation for this user of the selected Meetup
 			if (req.body.statusOnly) {
 				console.log("==========statusOnly=============")
 			
@@ -19,7 +25,8 @@ exports = module.exports = function(req, res) {
 					rsvped: rsvp ? true : false,
 					attending: rsvp && rsvp.attending ? true : false
 				});
-				
+			
+                        // Change RSVP attending status or create a new RSVP of the selected Meetup
 			} else {
 				
 				if (rsvp) {

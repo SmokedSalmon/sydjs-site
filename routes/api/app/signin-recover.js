@@ -1,3 +1,8 @@
+/*
+ * API handler for reseting user password, identify using emali address
+ * as username
+ */
+
 var keystone = require('keystone'),
 	User = keystone.list('User');
 

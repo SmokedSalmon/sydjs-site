@@ -20,3 +20,7 @@ node_modules
 ACCOUNTS.md
 
 graphql/schema.graphql
+
+# Omits IDE project-management directory
+nbproject*
+/nbproject/private/

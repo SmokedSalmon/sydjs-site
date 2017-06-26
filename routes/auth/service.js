@@ -1,3 +1,12 @@
+/*
+ * 3rd-party Authentication switch
+ * @req.params - service: name of selected 3rd-party authentication service
+ * @req.query  - target: ??? redirct destination after a successful authorization?
+ * switcher of the 3rd-party authenticaiton service, once selceted, this will pass
+ * control to the coresspondent 3rd-party library in "%source root%/lib/auth"
+ */
+
+
 var keystone = require('keystone'),
 	async = require('async');
 

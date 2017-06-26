@@ -1,3 +1,8 @@
+/*
+ * About page View Model
+ * Renders "%view path%/site/about"
+ */
+
 var keystone = require('keystone');
 
 exports = module.exports = function(req, res) {

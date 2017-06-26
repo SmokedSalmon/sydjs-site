@@ -1,3 +1,8 @@
+/*
+ * Handle givin user's RSVP status on a specific Meetup, including
+ * delete a RSVP, change attending status or create a New RSVP for that meetup
+ */
+
 var async = require('async'),
 	keystone = require('keystone'),
 	RSVP = keystone.list('RSVP'),

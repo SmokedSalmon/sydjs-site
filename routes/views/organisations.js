@@ -1,3 +1,9 @@
+/*
+ * View Model for the Organisations page
+ * Load all organisations with their members populated
+ * Renders "%view path%/site/organisations/"
+ */
+
 var keystone = require('keystone');
 
 var Organisation = keystone.list('Organisation');

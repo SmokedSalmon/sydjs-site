@@ -9,6 +9,8 @@ var Types = keystone.Field.Types;
  */
 
 var Meetup = new keystone.List('Meetup', {
+        // Keep track of this model, so when an Item is created, tcreatedAt, created By
+        // updatedAt, updateBy will be updated automatically upon any edition.
 	track: true,
 	autokey: { path: 'key', from: 'name', unique: true }
 });
@@ -24,7 +26,8 @@ Meetup.add({
 
 	place: { type: String, required: false, initial: true, width: 'medium', default: 'Level 6, 341 George St (Atlassian)', note: 'Usually Atlassian – Level 6, 341 George St' },
 	map: { type: String, required: false, initial: true, width: 'medium', default: 'Level 6, 341 George St', note: 'Level 6, 341 George St' },
-	description: { type: Types.Html, wysiwyg: true },
+	// Use a rich-text wysiwyog editor for the publisher to describe the Meetup
+        description: { type: Types.Html, wysiwyg: true },
 
 	maxRSVPs: { type: Number, default: 100 },
 	totalRSVPs: { type: Number, noedit: true },
@@ -46,16 +49,21 @@ Meetup.relationship({ ref: 'RSVP', refPath: 'meetup', path: 'rsvps' });
 
 // Virtuals
 // ------------------------------
+// Mongoose's 'Virtual' mechanism for calculated properties
 
+// Defines the 'url' virtual property for routing
+// A given Meetup's url is determined by 'meetups' path prefix and its unique key
 Meetup.schema.virtual('url').get(function() {
 	return '/meetups/' + this.key;
 });
 
+// Defines the 'remainingRSVP' property as maxRSVP - totalRSVPs.
 Meetup.schema.virtual('remainingRSVPs').get(function() {
 	if (!this.maxRSVPs) return -1;
 	return Math.max(this.maxRSVPs - (this.totalRSVPs || 0), 0);
 });
 
+// rsvpsAvailable = rue if there's reamaining RSVPs
 Meetup.schema.virtual('rsvpsAvailable').get(function() {
 	return (this.remainingRSVPs > 0);
 });
@@ -65,7 +73,9 @@ Meetup.schema.virtual('rsvpsAvailable').get(function() {
 
 // Pre Save
 // ------------------------------
+// Mongoose's pre hook to handle model item pre-save process
 
+// Modify meetup state accroding to published date and start date
 Meetup.schema.pre('save', function(next) {
 	var meetup = this;
 	// no published date, it's a draft meetup
@@ -92,7 +102,10 @@ Meetup.schema.pre('save', function(next) {
 
 // Methods
 // ------------------------------
+// Mongoose's custom method definition for specific schema
 
+// Calculate total RSVPs for a specific meetuup after going through all corresponding
+// RSVPs
 Meetup.schema.methods.refreshRSVPs = function(callback) {
 	var meetup = this;
 	keystone.list('RSVP').model.count()
@@ -105,6 +118,8 @@ Meetup.schema.methods.refreshRSVPs = function(callback) {
 		});
 }
 
+// Notify attendees of the meetup if the attendee's notification flag is true
+// For the use of the View-Model "notification-center"
 Meetup.schema.methods.notifyAttendees = function(req, res, next) {
 	var meetup = this;
 	keystone.list('User').model.find().where('notifications.meetups', true).exec(function(err, attendees) {
@@ -112,6 +127,7 @@ Meetup.schema.methods.notifyAttendees = function(req, res, next) {
 		if (!attendees.length) {
 			next();
 		} else {
+                        // Send each attendee a notification email for this meetup
 			attendees.forEach(function(attendee) {
 				new keystone.Email('new-meetup').send({
 					attendee: attendee,

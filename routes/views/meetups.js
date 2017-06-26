@@ -1,3 +1,9 @@
+/*
+ * View Model for the Meetups page
+ * Load all Meetups with the RSVP status for current user in the incoming Meetup
+ * Renders "%view path%/site/meetups/"
+ */
+
 var keystone = require('keystone'),
 	moment = require('moment'),
 	RSVP = keystone.list('RSVP');
@@ -25,7 +31,7 @@ exports = module.exports = function(req, res) {
 	, 'talks[who]');
 	
 	view.on('render', function(next) {
-	
+                
 		if (!req.user || !locals.upcomingMeetup) return next();
 		
 		RSVP.model.findOne()

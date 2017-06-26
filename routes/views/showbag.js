@@ -1,3 +1,8 @@
+/* View Model for the Showbag page
+ * Load members who belong to thinkmill organization and present related info
+ * Renders "%view path%/site/showbag/"
+ */
+
 var keystone = require('keystone'),
 	_ = require('lodash');
 

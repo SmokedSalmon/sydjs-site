@@ -1,3 +1,7 @@
+/*
+ * API handler for signin using email address as username
+ */
+
 var keystone = require('keystone');
 
 exports = module.exports = function(req, res) {

@@ -1,5 +1,11 @@
+/*
+ * View's RSVP data store for current meetup, RSVP and Attendees of this meetup
+ */
+
 var _ = require('lodash');
+// A very basic event driven Data store model creation library, not very popular
 var Store = require('store-prototype');
+// node couter part of REST agant - curl
 var request = require('superagent');
 
 var RSVPStore = new Store();
@@ -10,6 +16,7 @@ var meetup = {};
 var rsvp = {};
 var attendees = [];
 
+// Interval for view refresh for RSVP data
 var REFRESH_INTERVAL = 5000; // 5 seconds
 
 var refreshTimeout = null;
@@ -17,6 +24,7 @@ function cancelRefresh() {
 	clearTimeout(refreshTimeout);
 }
 
+// Construct the RSVP Data Stor for the View 
 RSVPStore.extend({
 
 	getMeetup: function() {
@@ -59,6 +67,8 @@ RSVPStore.extend({
 		return busy;
 	},
 
+        // Data store get current Meetup infomation via API route, for the use of
+        // instant query or periodical view refresh
 	getMeetupData: function(callback) {
 		// ensure any scheduled refresh is stopped,
 		// in case this was called directly

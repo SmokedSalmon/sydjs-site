@@ -1,4 +1,5 @@
 var async = require('async');
+// secure cryptographic algorithms
 var crypto = require('crypto');
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
@@ -22,6 +23,7 @@ var deps = {
 	twitter: { 'services.twitter.isConfigured': true }
 }
 
+// Notice the Headings(Keystone concept, String elemet) in the field object taken by add()
 User.add({
 	name: { type: Types.Name, required: true, index: true },
 	email: { type: Types.Email, initial: true, index: true },
@@ -43,6 +45,7 @@ User.add({
 		posts: { type: Boolean },
 		meetups: { type: Boolean, default: true }
 	}
+// Mentoring status and profile, for mentor exchange services of this website
 }, 'Mentoring', {
 	mentoring: {
 		available: { type: Boolean, label: 'Is Available', index: true },
@@ -56,6 +59,8 @@ User.add({
 	isAdmin: { type: Boolean, label: 'Can Admin SydJS' },
 	isVerified: { type: Boolean, label: 'Has a verified email address' }
 }, 'Services', {
+        // All 3rd-party services are depended on the correspondent isConfigure flag
+        // which will be set once the 3rd-party authenication has been approved.
 	services: {
 		github: {
 			isConfigured: { type: Boolean, label: 'GitHub has been authenticated' },
@@ -163,7 +168,7 @@ User.relationship({ ref: 'RSVP', refPath: 'who', path: 'rsvps' });
  * ========
  */
 
-// Link to member
+// Link to member, automatic url to this user's profile page
 User.schema.virtual('url').get(function() {
 	return '/member/' + this.key;
 });
@@ -173,7 +178,7 @@ User.schema.virtual('canAccessKeystone').get(function() {
 	return this.isAdmin;
 });
 
-// Pull out avatar image
+// Pull out avatar image from own storage, 3rd-party account or gravatar
 User.schema.virtual('avatarUrl').get(function() {
 	if (this.photo.exists) return this._.photo.thumbnail(120,120);
 	if (this.services.github.isConfigured && this.services.github.avatar) return this.services.github.avatar;
@@ -197,6 +202,9 @@ User.schema.virtual('githubUsername').get(function() {
  * =======
 */
 
+// Resets password, generate a key(token) and send it to user's email for the verification
+// of the person who issued this reset. Token is comined into a URL which will direct
+// to the "reset-password" view for actual password-reset process
 User.schema.methods.resetPassword = function(callback) {
 	var user = this;
 	user.resetPasswordKey = keystone.utils.randomString([16,24]);

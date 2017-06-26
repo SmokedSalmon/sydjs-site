@@ -1,3 +1,11 @@
+/*
+ * View Model for the "Links" page
+ * A view to present recent links populated under different categories.
+ * @req.params - tag: filter for link's tag?
+ * @req.query  - sort: sort order of links
+ * Renders "%view path%/site/links/"
+ */
+
 var keystone = require('keystone'),
 	async = require('async');
 	
@@ -21,7 +29,7 @@ exports = module.exports = function(req, res) {
 		tags: []
 	};
 	
-	// Load all categories
+	// Load all categories(Link Tags)
 	view.on('init', function(next) {
 		
 		keystone.list('LinkTag').model.find().sort('name').exec(function(err, results) {

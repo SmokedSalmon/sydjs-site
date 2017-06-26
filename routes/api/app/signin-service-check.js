@@ -1,3 +1,7 @@
+/*
+ * API handler for signIn users with 3rd-party  authentication service type
+ */
+
 var keystone = require('keystone'),
 	async = require('async'),
 	request = require('request'),

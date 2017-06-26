@@ -1,3 +1,9 @@
+/*
+ * A React component to display the attendee infomation of a single meetup
+ * It acquires the attendees's infomation from RSVPStore, then map them into
+ * the HTML <ul> tag prop 
+ */
+
 var React = require('react');
 var request = require('superagent');
 var RSVPStore = require('../stores/RSVPStore');
@@ -25,7 +31,8 @@ var AttendingApp = React.createClass({
 			attendees: RSVPStore.getAttendees()
 		});
 	},
-
+        
+        // render the heading title for attendees count
 	renderHeading: function() {
 		if (!this.state.isReady) return <h3 className="heading-with-line">...</h3>;
 		var count = this.state.attendees ? this.state.attendees.length : '...';
@@ -35,6 +42,7 @@ var AttendingApp = React.createClass({
 
 	render: function() {
 		var attendeesList;
+                // Map the attendees' list to a HTML <ul>
 		if (this.state.isReady) {
 			attendeesList = this.state.attendees.map(function(person) {
 				return <li key={person.id}><a href={person.url}><img width="40" height="40" alt={person.name} className="img-circle" src={person.photo ? person.photo : "/images/avatar.png"} /></a></li>

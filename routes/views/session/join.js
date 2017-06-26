@@ -1,3 +1,11 @@
+
+/*
+ * View Model for the Join Us page
+ * A view to present recent links populated under different categories.
+ * @req.params - tag: filter for link's tag?
+ * @req.query  - sort: sort order of links
+ * Renders "%view path%/session/join/"
+ */
 var keystone = require('keystone'),
 	async = require('async');
 
@@ -17,6 +25,7 @@ exports = module.exports = function(req, res) {
 		
 		async.series([
 			
+                        // Check if all required fields are filled
 			function(cb) {
 				
 				if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) {
@@ -28,6 +37,7 @@ exports = module.exports = function(req, res) {
 				
 			},
 			
+                        // Check if the email address is used
 			function(cb) {
 				
 				keystone.list('User').model.findOne({ email: req.body.email }, function(err, user) {
@@ -43,6 +53,7 @@ exports = module.exports = function(req, res) {
 				
 			},
 			
+                        // Save the user data thus creating a new user of the site
 			function(cb) {
 			
 				var userData = {
@@ -69,6 +80,7 @@ exports = module.exports = function(req, res) {
 			
 			if (err) return next();
 			
+                        // Redirecion after a successful sign-up
 			var onSuccess = function() {
 				if (req.body.target && !/join|signin/.test(req.body.target)) {
 					console.log('[join] - Set target as [' + req.body.target + '].');

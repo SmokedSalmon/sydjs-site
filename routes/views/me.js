@@ -1,3 +1,11 @@
+/*
+ * View Model for the User Me page
+ * @req.query  - disconnect: if given, disconnect the specified 3rd-party service
+ * Update user profile, resetting Password, disconecting 3rd-party authentication
+ * service
+ * Renders "%view path%/site/me/"
+ */
+
 var keystone = require('keystone'),
 	_ = require('lodash'),
 	moment = require('moment');
@@ -13,6 +21,9 @@ exports = module.exports = function(req, res) {
 	locals.section = 'me';
 	locals.page.title = 'Settings - SydJS';
 	
+        // view.query: Execute mongoose query, then store the resulte to view.locals
+        // with the 1st argument as key(path). please refer to: 
+        // https://github.com/keystonejs/keystone/wiki/Keystone-API#view
 	view.query('nextMeetup',
 		Meetup.model.findOne()
 			.where('state', 'active')
@@ -27,6 +38,7 @@ exports = module.exports = function(req, res) {
 			.sort('-createdAt')
 	);
 	
+        // Handle user profile change POST request, updating user profile
 	view.on('post', { action: 'profile.details' }, function(next) {
 	
 		req.user.getUpdateHandler(req).process(req.body, {
@@ -48,11 +60,13 @@ exports = module.exports = function(req, res) {
 	});
 	
 	view.on('init', function(next) {
-	
+                
+                // detect 'disconnect' key in the queryString
 		if (!_.has(req.query, 'disconnect')) return next();
 		
 		var serviceName = '';
 		
+                // 'disconnect' directiory as to disconnect 3rd-party service
 		switch(req.query.disconnect)
 		{
 			case 'github': req.user.services.github.isConfigured = null; serviceName = 'GitHub'; break;
@@ -75,8 +89,10 @@ exports = module.exports = function(req, res) {
 	
 	});
 	
+        // Handle password resetting POST request.
 	view.on('post', { action: 'profile.password' }, function(next) {
-	
+                
+                // Server-side validation, feedback using flash messages
 		if (!req.body.password || !req.body.password_confirm) {
 			req.flash('error', 'Please enter a password.');
 			return next();

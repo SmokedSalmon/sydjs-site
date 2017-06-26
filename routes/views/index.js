@@ -1,3 +1,8 @@
+/*
+ * Home page View Model
+ * Renders "%view path%/site/index"
+ */
+
 var keystone = require('keystone'),
 	moment = require('moment')
 
@@ -71,6 +76,9 @@ exports = module.exports = function(req, res) {
 		
 		locals.meetup = locals.activeMeetup || locals.pastMeetup;
 		if (locals.meetup) {
+                        // Undocumented method of Keystone: populatedRelated
+                        // See https://github.com/Automattic/mongoose/issues/1888
+                        // populates the attenddees of the meetup's talks and RSVPs
 			locals.meetup.populateRelated('talks[who] rsvps[who]', next);
 		} else {
 			next();

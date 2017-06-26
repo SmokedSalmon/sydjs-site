@@ -1,4 +1,5 @@
 var _ = require('lodash');
+// good old querystring module for all engine. Ceased updating at 2013
 var querystring = require('querystring');
 var keystone = require('keystone');
 
@@ -10,7 +11,8 @@ var keystone = require('keystone');
 exports.initLocals = function(req, res, next) {
 
 	var locals = res.locals;
-
+        
+        // navLinks, contains Objects each is a label-key-href value group
 	locals.navLinks = [
 		{ label: 'Home',			key: 'home',		href: '/' },
 		{ label: 'Code of Conduct',	key: 'about',		href: '/about#CoC' },
@@ -18,22 +20,29 @@ exports.initLocals = function(req, res, next) {
 		{ label: 'Members',			key: 'members',		href: '/members' },
 		{ label: 'Showbag',			key: 'showbag',		href: '/showbag' }
 	];
-
+        
+        // pass user object to view locals (if there is)
 	locals.user = req.user;
-
+        
+        // baseDir
 	locals.basedir = keystone.get('basedir');
 
+        // Page url without query string, for redirecting purposes
 	locals.page = {
 		title: 'SydJS',
 		path: req.url.split("?")[0] // strip the query - handy for redirecting back to the page
 	};
 
+        // inject a reference of a querryString value setting method into the view locals
 	locals.qs_set = qs_set(req, res);
+        
+        // ??? refresh cookies?
+	if (req.cookies.target && req.cookies.target === locals.page.path) res.clearCookie('target');
 
-	if (req.cookies.target && req.cookies.target == locals.page.path) res.clearCookie('target');
-
+        // Browser vendor and version detection, 3rdparty library
 	var bowser = require('../lib/node-bowser').detect(req);
 
+        // client OS platform detection, given by client's browser
 	locals.system = {
 		mobile: bowser.mobile,
 		ios: bowser.ios,
@@ -85,6 +94,7 @@ exports.initErrorHandlers = function(req, res, next) {
 
 /**
 	Fetches and clears the flashMessages before a view is rendered
+        Implemented via keystone.pre('render', ...) method
 */
 
 exports.flashMessages = function(req, res, next) {
@@ -118,6 +128,7 @@ exports.requireUser = function(req, res, next) {
 
 var qs_set = exports.qs_set = function(req, res) {
 	return function qs_set(obj) {
+                // clone to whole querystring data object, not just the reference!!!
 		var params = _.clone(req.query);
 		for (var i in obj) {
 			if (obj[i] === undefined || obj[i] === null) {

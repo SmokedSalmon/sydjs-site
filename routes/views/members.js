@@ -1,3 +1,9 @@
+/*
+ * View Model for the Members page
+ * Load all users of the site, categorize them into organizers, speakers and community
+ * Renders "%view path%/site/members/"
+ */
+
 var keystone = require('keystone'),
 	_ = require('lodash');
 
@@ -27,7 +33,7 @@ exports = module.exports = function(req, res) {
 
 
 	// Load Speakers
-
+        // Speakers are users with talkCount > 0
 	view.on('init', function(next) {
 		User.model.find()
 		.sort('-talkCount name.first')
@@ -42,7 +48,8 @@ exports = module.exports = function(req, res) {
 
 
 	// Pluck IDs for filtering Community
-
+        // so that user who are organiser or speakers can be seperated from the
+        // common community during the next load
 	view.on('init', function(next) {
 		locals.organiserIDs = _.pluck(locals.organisers, 'id');
 		locals.speakerIDs = _.pluck(locals.speakers, 'id');

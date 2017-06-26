@@ -7,6 +7,7 @@ var Types = keystone.Field.Types;
  */
 
 var LinkTag = new keystone.List('LinkTag', {
+        // Each tag's key is composed by its name field, and store at path 'key'
 	autokey: { from: 'name', path: 'key', unique: true }
 });
 

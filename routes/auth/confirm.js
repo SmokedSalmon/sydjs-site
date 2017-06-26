@@ -1,3 +1,13 @@
+/*
+ * View Model for the Confirm page
+ * (Not sure if this page is for access from 3rd-party authentication or user?
+ * @req.query  - returnto: 
+ * @session: auth - authenticated information(token/key with expiration date) 
+ *                  given by a successful 3rd-party for users to store in their
+ *                   own session for future identification
+ * Renders "%view path%/auth/confirm/"
+ */
+
 var keystone = require('keystone'),
 	async = require('async'),
 	request = require('request'),
@@ -83,7 +93,8 @@ exports = module.exports = function(req, res) {
 	
 		async.series([
 			
-			// Check for user by email (only if not signed in)
+			// Check for user by email (only if not signed in) to see
+                        // if the email address is registered already
 			function(next) {
 				
 				if (locals.existingUser) return next();
@@ -111,7 +122,9 @@ exports = module.exports = function(req, res) {
 			
 			// Create or update user
 			function(next) {
-			
+                                
+                                // Received 3rd-party authorization while current user
+                                // is already signined. So update authorization
 				if (locals.existingUser) {
 				
 					console.log('[auth.confirm] - Existing user found, updating...');
@@ -154,6 +167,9 @@ exports = module.exports = function(req, res) {
 						return next();
 					});
 				
+                                // user not signined, which means the 3rd-party authorization
+                                // is the first time. Create user with this authorization
+                                // detail
 				} else {
 				
 					console.log('[auth.confirm] - Creating new user...');
@@ -176,6 +192,8 @@ exports = module.exports = function(req, res) {
 						services: {}
 					};
 					
+                                        // Injecting newly returned 3rd-party authorization 
+                                        // information into this user
 					userData.services[locals.authUser.type] = {
 						isConfigured: true,
 						
@@ -214,6 +232,7 @@ exports = module.exports = function(req, res) {
 					console.log('------------------------------------------------------------');
 					return res.redirect(req.cookies.target || '/me');
 				}
+                                // sign in after a successfull 3rd-party authentication
 				return doSignIn();
 			}
 		

@@ -1,3 +1,10 @@
+/*
+ * A React component to display the RSVP infomation of a single meetup, and props
+ * to change the RSVP and attending status for current logined user
+ * It acquires the infomation on upcoming meetup and its RSVP for current logined user
+ * from RSVPStore, then populate all the props according to the state. 
+ */
+
 var React = require('react');
 var request = require('superagent');
 var RSVPStore = require('../stores/RSVPStore');
@@ -30,11 +37,12 @@ var HeroApp = React.createClass({
 			rsvp: RSVPStore.getRSVP(),
 		});
 	},
-
+        
 	toggleRSVP: function(attending) {
 		RSVPStore.rsvp(attending);
 	},
-
+        
+        // Button Title according to the user's current attending status upon this RSVP
 	renderWelcome: function() {
 		if (this.state.rsvp.attending) {
 			return <h4 className="hero-button-title"><span className = "welcome-message">We have your RSVP</span></h4>
@@ -43,6 +51,7 @@ var HeroApp = React.createClass({
 		}
 	},
 
+        // Attach <div> prop indication loading procedure
 	renderLoading: function() {
 		return (
 			<div className="hero-button">
@@ -51,6 +60,7 @@ var HeroApp = React.createClass({
 		);
 	},
 
+        // Attach <div> prop indicating "component is busy"
 	renderBusy: function() {
 		return (
 			<div className="hero-button">
@@ -58,9 +68,12 @@ var HeroApp = React.createClass({
 			</div>
 		);
 	},
-
+        
+        // Render button for user not yet has RSVP for this meetup
 	renderRSVPButton: function() {
 		return (
+                        // the event handler needs its keyword "this" change to the whole component
+                        // since it is passed to the <div> DOM and invoked by the DOM itself
 			<div className="hero-button" onClick={this.toggleRSVP.bind(this, true)}>
 				<a className="btn btn-primary btn-lg btn-block">
 					RSVP Now (<span className="text-thin">{this.state.meetup.remainingRSVPs} spots left</span>)
@@ -68,8 +81,10 @@ var HeroApp = React.createClass({
 			</div>
 		);
 	},
-
+        
+        // Render RSVP toggle button for user who has RSVP fo this meetup
 	renderRSVPToggle: function() {
+                // On/off style for the toggle button upon current user's attending status
 		var attending = this.state.rsvp.attending ?  ' btn-success btn-default active' : null;
 		var notAttending = this.state.rsvp.attending ? null : ' btn-danger btn-default active';
 		return (
@@ -97,6 +112,7 @@ var HeroApp = React.createClass({
 		window.signinModalTrigger(e);
 	},
 
+        // Render a button for signin purpose if no user is detected
 	renderRSVPSignin: function() {
 		return (
 			<div className="hero-button">

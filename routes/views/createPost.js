@@ -1,3 +1,9 @@
+/*
+ * View Model for the Create Link page
+ * create the Link
+ * Renders "%view path%/site/createPost/"
+ */
+
 var keystone = require('keystone'),
 	Post = keystone.list('Post');
 
@@ -26,6 +32,7 @@ exports = module.exports = function(req, res) {
 			newPost.state = 'published';
 		}
 		
+                // ??? only 3 these 3 fields are written ??
 		updater.process(req.body, {
 			flashErrors: true,
 			logErrors: true,
@@ -33,6 +40,10 @@ exports = module.exports = function(req, res) {
 		}, function(err) {
 			if (err) {
 				locals.validationErrors = err.errors;
+                                
+                        // injects flash message in to request body, and
+                        // redirect directive into response body and release
+                        // them back to the pipeline        
 			} else {
 				newPost.notifyAdmins();
 				req.flash('success', 'Your post has been added' + ((newPost.state == 'draft') ? ' and will appear on the site once it\'s been approved' : '') + '.');

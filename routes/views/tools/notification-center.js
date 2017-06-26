@@ -1,3 +1,11 @@
+/*
+ * View Model for the notification-center tool page (Admin)
+ * Notification management for site admins, grant them ability to manually send
+ * email notifications to upcoming meetup attendess and subscribers.
+ * Renders "%view path%/tools/notification-center/"
+ */
+
+
 var keystone = require('keystone'),
 	async = require('async');
 
@@ -51,7 +59,7 @@ exports = module.exports = function(req, res) {
 	});
 
 	
-	// Notify next meetup attendees
+	// Notify next meetup attendees with email
 
 	view.on('post', { action: 'notify.attendee' }, function(next) {
 		if (!locals.nextMeetup) {
@@ -72,7 +80,7 @@ exports = module.exports = function(req, res) {
 	});
 
 	
-	// Notify all SydJS subscribers
+	// Notify all SydJS subscribers with email
 
 	view.on('post', { action: 'notify.subscriber' }, function(next) {
 		if (!locals.subscribers) {

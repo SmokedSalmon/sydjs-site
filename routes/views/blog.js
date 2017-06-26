@@ -1,3 +1,10 @@
+/*
+ * View Model for the "Blog"(Posts) page
+ * A view to present recent blogs populated under different categories.
+ * @req.params - category: filter for post category
+ * Renders "%view path%/site/blog/"
+ */
+
 var keystone = require('keystone'),
 	async = require('async');
 
@@ -29,6 +36,7 @@ exports = module.exports = function(req, res) {
 			locals.data.categories = results;
 			
 			// Load the counts for each category
+                        // "async.each()" iterate all elements in the collecion parallelly
 			async.each(locals.data.categories, function(category, next) {
 				
 				keystone.list('Post').model.count().where('category').in([category.id]).exec(function(err, count) {
@@ -63,6 +71,7 @@ exports = module.exports = function(req, res) {
 		
 		var q = keystone.list('Post').model.find().where('state', 'published').sort('-publishedDate').populate('author categories');
 		
+                // Filter the posts
 		if (locals.data.category) {
 			q.where('categories').in([locals.data.category]);
 		}

@@ -1,3 +1,9 @@
+/* View Model for the Post page
+ * Load a single Post, with comments
+ * @req.params - post: used as a filter, in fact it is the identifier to a specific post
+ * Renders "%view path%/site/post/"
+ */
+
 var keystone = require('keystone');
 
 var Post = keystone.list('Post');
@@ -45,7 +51,8 @@ exports = module.exports = function(req, res) {
 			.populate('author')
 			.limit('4')
 	);
-
+        
+        // Hanlde comment creation in this Post page
 	view.on('post', { action: 'create-comment' }, function(next) {
 
 		// handle form

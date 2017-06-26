@@ -1,3 +1,9 @@
+/*
+ * View Model for the Create Link page
+ * create the Link
+ * Renders "%view path%/site/createlink/"
+ */
+
 var keystone = require('keystone'),
 	Link = keystone.list('Link');
 
@@ -26,6 +32,7 @@ exports = module.exports = function(req, res) {
 			newLink.state = 'published';
 		}
 		
+                // Update the Link data
 		updater.process(req.body, {
 			flashErrors: true,
 			logErrors: true,

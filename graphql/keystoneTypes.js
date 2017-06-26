@@ -5,6 +5,7 @@ import {
 	GraphQLString,
 } from 'graphql';
 
+// Defines a name object type for users' names wih first name, last name and full name.
 export var name = new GraphQLObjectType({
 	name: 'KeystoneName',
 	fields: {
@@ -20,6 +21,7 @@ export var name = new GraphQLObjectType({
 	},
 });
 
+// Defines image object type for images which utilize the cloudinary service
 export var cloudinaryImage = new GraphQLObjectType({
 	name: 'KeystoneCloudinaryImage',
 	fields: {
@@ -53,6 +55,7 @@ export var cloudinaryImage = new GraphQLObjectType({
 	},
 });
 
+// Defines location object type, as the location field of user profile
 export var location = new GraphQLObjectType({
 	name: 'KeystoneLocation',
 	fields: {
@@ -87,6 +90,11 @@ export var location = new GraphQLObjectType({
 	},
 });
 
+// A date query? type which takes a parameter - field
+// => Arrow expression, if you don't understand, please refer to MDN document
+// and ECMAScript 2015 standard.
+// Parenthesize the brackets so that contents within {} is parsed as object literal
+// instead of statesment/expressions.
 export var date = (field) => ({
 	type: GraphQLString,
 	args: {
@@ -104,6 +112,7 @@ export var date = (field) => ({
 	},
 });
 
+// A date query? type which takes a parameter - field
 export var datetime = (field) => ({
 	type: GraphQLString,
 	args: {
@@ -121,6 +130,7 @@ export var datetime = (field) => ({
 	},
 });
 
+// Defines link object type for links used in the website
 export var link = new GraphQLObjectType({
 	name: 'KeystoneLink',
 	fields: {
@@ -135,6 +145,8 @@ export var link = new GraphQLObjectType({
 	},
 });
 
+// Defines markdown object type, md is the marked text, with html as the replaced
+// html code.
 export var markdown = new GraphQLObjectType({
 	name: 'KeystoneMarkdown',
 	fields: {
@@ -149,6 +161,7 @@ export var markdown = new GraphQLObjectType({
 	},
 });
 
+// The email query? type, gravatarUrl is yet to be understood
 export var email = new GraphQLObjectType({
 	name: 'KeystoneEmail',
 	fields: {

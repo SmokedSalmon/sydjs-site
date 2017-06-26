@@ -1,3 +1,9 @@
+/*
+ * User stauts page routing
+ * Retrieve the last and next meetup, and user info regarding RSVP and Talks for
+ * the next meetup
+ */
+
 var keystone = require('keystone'),
 	async = require('async'),
 	_ = require('lodash'),
@@ -8,6 +14,9 @@ exports = module.exports = function(req, res) {
 	
 	var data = { meetups: {}, talks: {}, rsvp: {} };
 	
+        // retrieve the user status with givin ID in the request body
+        // status includes: last and next Meetup, and the correspondent talks
+        // RSVP for this user during the next Meetup
 	async.series([
 		function(next) {
 			if (!req.body.user) return next();
@@ -73,7 +82,8 @@ exports = module.exports = function(req, res) {
 				});
 		}
 	], function(err) {
-		
+		// after retrieving all data, construct a data object to contain
+                // them and pack it into the response
 		var response = {
 			success: true,
 			config: {
@@ -94,6 +104,8 @@ exports = module.exports = function(req, res) {
 			user: false
 		}
 		
+                // basic cryto for meetup infomation, for the use of crypting meetup data
+                // in the response
 		var parseMeetup = function(meetup, current) {
 			var meetupData = {
 				id: meetup._id,
